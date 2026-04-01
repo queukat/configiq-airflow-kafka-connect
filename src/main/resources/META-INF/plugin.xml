@@ -1,0 +1,82 @@
+<idea-plugin url="https://github.com/queukat/configiq-airflow-kafka-connect">
+    <id>com.configiq.airflowkconnect</id>
+    <name>ConfigIQ Ops</name>
+    <vendor url="https://github.com/queukat" email="75810528+queukat@users.noreply.github.com">ConfigIQ</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.python</depends>
+    <depends>com.intellij.modules.json</depends>
+    <depends>com.intellij.properties</depends>
+    <depends>org.intellij.intelliLang</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
+    <description><![CDATA[
+        <p>ConfigIQ Ops is a narrow authoring assistant for Airflow DAG schedules and Kafka Connect configs.</p>
+        <ul>
+            <li>validates Airflow schedule strings and previews the next runs</li>
+            <li>flags high-value Kafka Connect conflicts and missing required keys</li>
+            <li>adds focused quick fixes and RegExp injection for JSON and YAML regex fields</li>
+        </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+        <p>Initial public MVP release.</p>
+        <ul>
+            <li>Airflow schedule inspection and next-run preview for obvious DAG contexts.</li>
+            <li>Kafka Connect inspections and quick fixes for JSON, YAML, and properties files.</li>
+            <li>Pack-level settings and RegExp injection for Kafka Connect JSON and YAML regex fields.</li>
+        </ul>
+    ]]></change-notes>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.configiq.settings.ConfigIqSettingsConfigurable"
+                id="com.configiq.airflowkconnect.settings"
+                displayName="ConfigIQ"/>
+        <multiHostInjector implementation="com.configiq.injection.KConnectRegexInjector"/>
+        <localInspection
+                language="Python"
+                shortName="AirflowInvalidSchedule"
+                displayName="Invalid schedule"
+                groupPath="ConfigIQ"
+                groupName="Airflow"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.configiq.inspection.AirflowScheduleInspection"/>
+        <localInspection
+                language="JSON"
+                shortName="KConnectJsonProblems"
+                displayName="Kafka Connect config problem"
+                groupPath="ConfigIQ"
+                groupName="Kafka Connect"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.configiq.inspection.KConnectJsonInspection"/>
+        <localInspection
+                language="yaml"
+                shortName="KConnectYamlProblems"
+                displayName="Kafka Connect config problem"
+                groupPath="ConfigIQ"
+                groupName="Kafka Connect"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.configiq.inspection.KConnectYamlInspection"/>
+        <localInspection
+                language="Properties"
+                shortName="KConnectPropertiesProblems"
+                displayName="Kafka Connect config problem"
+                groupPath="ConfigIQ"
+                groupName="Kafka Connect"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.configiq.inspection.KConnectPropertiesInspection"/>
+        <intentionAction>
+            <className>com.configiq.preview.PreviewAirflowScheduleIntention</className>
+            <category>ConfigIQ</category>
+            <descriptionDirectoryName>PreviewAirflowScheduleIntention</descriptionDirectoryName>
+            <language>Python</language>
+            <skipBeforeAfter>true</skipBeforeAfter>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

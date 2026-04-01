@@ -1,0 +1,10 @@
+{
+  "name": "orders-source",
+  "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+  "tasks.max": "1",
+  "topics": "orders,orders_dlq",
+  "topics.regex": "orders.*",
+  "transforms": "maskTopic",
+  "transforms.maskTopic.regex": "orders(.*)"
+}
+
