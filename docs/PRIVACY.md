@@ -1,6 +1,6 @@
 # ConfigIQ Ops Privacy
 
-`ConfigIQ Ops` does not collect, transmit, or sell personal data in version `0.1.0`.
+`ConfigIQ Ops` does not collect, transmit, or sell personal data in the current public release.
 
 The plugin currently operates on local files inside the IDE and does not send file contents, project metadata, or usage analytics to a remote service.
 

@@ -1,6 +1,8 @@
 package com.configiq.domain.airflow
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLiteralValue
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.python.psi.PyCallExpression
 import com.jetbrains.python.psi.PyKeywordArgument
@@ -26,12 +28,13 @@ object AirflowDagContextMatcher {
     }
 
     fun fromKeywordArgument(keywordArgument: PyKeywordArgument): AirflowScheduleTarget? {
-        val keyword = keywordArgument.keyword ?: return null
+        val keyword = extractKeyword(keywordArgument) ?: return null
         if (keyword !in AIRFLOW_SCHEDULE_KEYWORDS) {
             return null
         }
 
         val literal = keywordArgument.valueExpression as? PyStringLiteralExpression ?: return null
+        val scheduleText = extractStringValue(literal) ?: return null
         if (!isDagCall(keywordArgument)) {
             return null
         }
@@ -39,9 +42,15 @@ object AirflowDagContextMatcher {
         return AirflowScheduleTarget(
             keyword = keyword,
             literal = literal,
-            scheduleText = literal.stringValue,
+            scheduleText = scheduleText,
         )
     }
+
+    private fun extractKeyword(keywordArgument: PyKeywordArgument): String? =
+        (keywordArgument as PsiNamedElement).name
+
+    private fun extractStringValue(literal: PyStringLiteralExpression): String? =
+        (literal as? PsiLiteralValue)?.value as? String
 
     private fun isDagCall(keywordArgument: PyKeywordArgument): Boolean {
         val callExpression = PsiTreeUtil.getParentOfType(keywordArgument, PyCallExpression::class.java, false) ?: return false

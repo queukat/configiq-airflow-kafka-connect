@@ -20,11 +20,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
-        <p>Initial public MVP release.</p>
+        <p>Compatibility and release-prep patch.</p>
         <ul>
-            <li>Airflow schedule inspection and next-run preview for obvious DAG contexts.</li>
-            <li>Kafka Connect inspections and quick fixes for JSON, YAML, and properties files.</li>
-            <li>Pack-level settings and RegExp injection for Kafka Connect JSON and YAML regex fields.</li>
+            <li>Replaced experimental Python AST usage in Airflow schedule matching with stable PSI APIs.</li>
+            <li>Added regression tests to prevent verifier warnings from returning.</li>
+            <li>Kept the existing Airflow and Kafka Connect MVP behavior unchanged.</li>
         </ul>
     ]]></change-notes>
 
