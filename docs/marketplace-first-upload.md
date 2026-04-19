@@ -111,6 +111,7 @@
 - Still not complete for first Marketplace upload because:
   - ZIP signing credentials are not configured in this workspace
   - Marketplace listing links still need to be set in JetBrains Marketplace
+  - actual screenshot image files still need to be captured from the IDE
 
 ## Current metadata gaps
 
@@ -121,6 +122,7 @@
 - Still expected before upload:
   - Marketplace-side listing links
   - signing credentials for `signPlugin`
+  - captured screenshot assets
 - Marketplace name decision is fixed as `ConfigIQ Ops`.
 
 ## Name shortlist

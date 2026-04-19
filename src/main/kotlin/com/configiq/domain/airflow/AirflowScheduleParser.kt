@@ -13,6 +13,7 @@ sealed interface AirflowScheduleValidationResult {
 data class ParsedAirflowSchedule(
     val normalizedText: String,
     val previewLabel: String,
+    val resultSummary: String,
     private val nextRunsProvider: ((ZonedDateTime, Int) -> List<ZonedDateTime>)?,
 ) {
     fun supportsPreview(): Boolean = nextRunsProvider != null
@@ -78,6 +79,8 @@ object AirflowScheduleParser {
             return AirflowScheduleValidationResult.Invalid("Cron schedule must have exactly 5 fields, got ${parts.size}.")
         }
 
+        val normalizedCron = parts.joinToString(" ")
+
         val minuteField = parseField(parts[0], 0..59, "minute") ?: return invalidField("minute", parts[0])
         val hourField = parseField(parts[1], 0..23, "hour") ?: return invalidField("hour", parts[1])
         val dayOfMonthField = parseField(parts[2], 1..31, "day of month") ?: return invalidField("day of month", parts[2])
@@ -94,8 +97,9 @@ object AirflowScheduleParser {
 
         return AirflowScheduleValidationResult.Valid(
             ParsedAirflowSchedule(
-                normalizedText = normalized,
-                previewLabel = normalized,
+                normalizedText = normalizedCron,
+                previewLabel = normalizedCron,
+                resultSummary = "Normalized cron: $normalizedCron",
                 nextRunsProvider = cronSpec::nextRuns,
             ),
         )
@@ -111,6 +115,7 @@ object AirflowScheduleParser {
             return ParsedAirflowSchedule(
                 normalizedText = macro,
                 previewLabel = macro,
+                resultSummary = "Runs once, so there is no recurring cron preview.",
                 nextRunsProvider = null,
             )
         }
@@ -119,6 +124,7 @@ object AirflowScheduleParser {
         return ParsedAirflowSchedule(
             normalizedText = macro,
             previewLabel = macro,
+            resultSummary = "Resolved to cron: $cronExpression",
             nextRunsProvider = validation.schedule::previewNextRuns,
         )
     }

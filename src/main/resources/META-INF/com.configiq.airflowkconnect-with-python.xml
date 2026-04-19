@@ -1,0 +1,20 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection
+                language="Python"
+                shortName="AirflowInvalidSchedule"
+                displayName="Invalid schedule"
+                groupPath="ConfigIQ"
+                groupName="Airflow"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.configiq.inspection.AirflowScheduleInspection"/>
+        <intentionAction>
+            <className>com.configiq.preview.PreviewAirflowScheduleIntention</className>
+            <category>ConfigIQ</category>
+            <descriptionDirectoryName>PreviewAirflowScheduleIntention</descriptionDirectoryName>
+            <language>Python</language>
+            <skipBeforeAfter>true</skipBeforeAfter>
+        </intentionAction>
+    </extensions>
+</idea-plugin>

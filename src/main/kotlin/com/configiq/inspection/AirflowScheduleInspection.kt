@@ -6,9 +6,8 @@ import com.configiq.domain.airflow.AirflowScheduleValidationResult
 import com.configiq.settings.ConfigIqSettingsService
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.jetbrains.python.psi.PyElementVisitor
-import com.jetbrains.python.psi.PyKeywordArgument
 
 class AirflowScheduleInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -16,9 +15,9 @@ class AirflowScheduleInspection : LocalInspectionTool() {
             return PsiElementVisitor.EMPTY_VISITOR
         }
 
-        return object : PyElementVisitor() {
-            override fun visitPyKeywordArgument(node: PyKeywordArgument) {
-                val target = AirflowDagContextMatcher.fromKeywordArgument(node) ?: return
+        return object : PsiElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                val target = AirflowDagContextMatcher.fromKeywordArgument(element) ?: return
                 when (val validation = AirflowScheduleParser.validate(target.scheduleText)) {
                     is AirflowScheduleValidationResult.Valid -> Unit
                     is AirflowScheduleValidationResult.Invalid -> {

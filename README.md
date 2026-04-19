@@ -4,12 +4,13 @@
 
 The repository name stays `configiq_airflow_kafka_connect`; the published plugin name is `ConfigIQ Ops`.
 
-The MVP is currently built and tested against PyCharm 2025.1-based IDEs to keep Python/Airflow support first-class.
+The current package is built against the JetBrains 2024.1 platform (`since-build 241`) with a Java 17 toolchain.
+PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Python support.
 
 ## What the plugin does
 
 - validates Airflow schedule strings in obvious DAG contexts
-- previews the next 5 Airflow runs for valid cron schedules and supported macros
+- shows the parsed Airflow schedule result and previews the next 5 runs for valid cron schedules and supported macros
 - detects Kafka Connect config files by signature keys
 - injects RegExp language into Kafka Connect regex fields in JSON and YAML configs
 - flags common Kafka Connect authoring mistakes in JSON, YAML, and `.properties`
@@ -33,7 +34,7 @@ The MVP is currently built and tested against PyCharm 2025.1-based IDEs to keep 
 
 - Python files with obvious `DAG(...)` or `with DAG(...)` patterns
 - string literal `schedule` / `schedule_interval` values
-- preview intention for valid 5-field cron strings and supported macros
+- schedule-result intention for valid 5-field cron strings and supported macros
 
 ### Kafka Connect
 
@@ -44,9 +45,8 @@ The MVP is currently built and tested against PyCharm 2025.1-based IDEs to keep 
 
 ## Screenshots
 
-- Placeholder: invalid Airflow schedule warning in editor
-- Placeholder: Airflow schedule preview popup
-- Placeholder: Kafka Connect regex injection + conflict inspection + quick fix
+- Capture plan: [docs/marketplace-screenshot-pack.md](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/docs/marketplace-screenshot-pack.md)
+- Screenshot output folder: [assets/marketplace/screenshots/README.md](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/assets/marketplace/screenshots/README.md)
 
 ## How to run
 
@@ -62,16 +62,24 @@ The MVP is currently built and tested against PyCharm 2025.1-based IDEs to keep 
 ./gradlew.bat -g .gradle-user-home verifyPlugin --console=plain
 ```
 
+## How to publish
+
+- Publishing guide: `docs/publishing.md`
+- Current workflow: bump the version, run `test buildPlugin verifyPlugin`, then run `publishPlugin`
+- Marketplace page: https://plugins.jetbrains.com/plugin/31040-configiq-ops
+
 ## Project links
 
 - Source code: https://github.com/queukat/configiq-airflow-kafka-connect
 - Issues: https://github.com/queukat/configiq-airflow-kafka-connect/issues
 - EULA: ./docs/EULA.md
 - Privacy: ./docs/PRIVACY.md
+- Quick Start: ./docs/quick-start.md
+- Sample configs: ./samples/README.md
 
 ## Roadmap
 
 - add Airflow Jinja injection only in a few obvious templated fields
 - add Kafka Connect regex injection for `.properties` when the PSI host path is worth it
-- broaden Airflow schedule semantics only after the current cron preview flow is stable
+- broaden Airflow schedule semantics only after the current schedule-result flow is stable
 - improve Marketplace assets and screenshots around the existing demo flows

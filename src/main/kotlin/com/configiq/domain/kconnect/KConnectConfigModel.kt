@@ -98,7 +98,8 @@ object KConnectConfigModel {
             KConnectEntry(
                 key = key,
                 value = value,
-                element = property.firstChild ?: property,
+                // Highlight the whole property line for missing-key warnings.
+                element = property,
             )
         }
         return buildConfig(file, KConnectConfigFormat.PROPERTIES, entries)

@@ -7,12 +7,14 @@
   - keep the MVP narrow and screenshot-friendly
   - no remote integrations, cluster management, or generic linting framework
   - prefer explicit domain code over a reusable rules engine
-- Repository state on 2026-03-31:
+- Repository state on 2026-04-10:
   - Gradle Kotlin DSL plugin scaffold already exists
-  - target IDE is PyCharm 2025.1 with Python, YAML, and JSON dependencies
+  - current package target is JetBrains 2024.1 / build 241
+  - Java 17 is the compatible toolchain for the current target line
+  - Python, YAML, JSON, Properties, and IntelliLang dependencies are wired in the build
   - docs and demo samples already exist
-  - there is no meaningful plugin implementation yet beyond metadata
-  - the workspace is not a Git repository
+  - the core Airflow and Kafka Connect MVP behavior already exists in source and tests
+  - the workspace is under Git
 - Decision: continue from the existing scaffold and normalize it instead of re-scaffolding.
 - Constraint: prefer one coherent, demoable MVP over a generic validation framework.
 - Scope cut after sanity checks:
@@ -38,7 +40,7 @@
   - `schedule`
   - `schedule_interval`
 - Validate cron expressions in string literals.
-- Provide a preview action/intention that shows the next few run times for valid cron schedules.
+- Provide a schedule-result action/intention that shows the parsed schedule result and the next few run times for valid cron schedules.
 - Keep Airflow authoring help focused on schedules for v1; Jinja injection is postponed.
 
 ### Kafka Connect pack
@@ -90,12 +92,12 @@
 
 ## Recommended product shape
 
-- Target IDE for MVP: PyCharm 2025.1-based IDEs.
-- Reason: Airflow support is core, and PyCharm is the smallest official target with straightforward Python APIs.
+- Current package target: JetBrains 2024.1 / build 241.
+- Primary smoke target: PyCharm on the 241 line, because Airflow support is core and the Python APIs stay first-class there.
 - Language dependencies expected:
   - Python support for Airflow pack
   - JSON, Properties, YAML support for Kafka Connect pack
-  - IntelliLang postponed unless injection needs it
+  - IntelliLang for regex injection support
 
 ## Architecture
 
@@ -142,7 +144,7 @@ Prefer explicit domain code with small reusable helpers.
 3. Extract `schedule` / `schedule_interval` string literal values.
 4. Validate cron only for plain string cases.
 5. If invalid, register inspection problem on the literal.
-6. If valid, offer a preview intention using the parsed schedule.
+6. If valid, offer a schedule-result intention using the parsed schedule.
 7. Stop there for v1; do not expand into broad Airflow template injection.
 
 ### Kafka Connect flow
@@ -205,11 +207,11 @@ Prefer explicit domain code with small reusable helpers.
 
 ## Sample / demo assets
 
-- `samples/airflow/invalid_schedule_dag.py`
+- `samples/airflow/invalid_cron_schedule_dag.py`
 - `samples/airflow/jinja_template_dag.py`
-- `samples/kafka-connect/conflicting_topics.json`
-- `samples/kafka-connect/missing_transform_type.yaml`
-- `samples/kafka-connect/minimal-source.properties`
+- `samples/kafka-connect/invalid_conflicting_topics.json`
+- `samples/kafka-connect/invalid_missing_transform_type.yaml`
+- `samples/kafka-connect/invalid_missing_tasks_max.properties`
 - screenshot placeholder section in `README.md`
 
 ## Milestones

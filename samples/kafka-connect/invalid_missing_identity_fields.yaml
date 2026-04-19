@@ -1,0 +1,5 @@
+tasks.max: "1"
+topics.regex: "inventory\\..*"
+transforms: routeTopic
+transforms.routeTopic.type: org.apache.kafka.connect.transforms.RegexRouter
+transforms.routeTopic.regex: "inventory\\.(.*)"

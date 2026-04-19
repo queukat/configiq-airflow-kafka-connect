@@ -7,4 +7,3 @@
   "transforms": "maskTopic",
   "transforms.maskTopic.regex": "orders(.*)"
 }
-

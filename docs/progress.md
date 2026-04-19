@@ -291,3 +291,27 @@
 ### Next smallest useful step
 
 - Publish the Git repository, wire Marketplace listing links to it, and add ZIP signing credentials before the first upload.
+
+## Milestone 7: Marketplace asset prep
+
+### Release asset update
+
+- Date: 2026-04-01
+- Decision:
+  - prepare screenshot-ready scenes and one-page onboarding docs inside the repository
+  - keep actual image capture as a manual GUI step
+
+### Implemented
+
+- Added [Quick Start](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/docs/quick-start.md).
+- Added a screenshot capture pack in [docs/marketplace-screenshot-pack.md](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/docs/marketplace-screenshot-pack.md).
+- Added a screenshot output folder note in [assets/marketplace/screenshots/README.md](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/assets/marketplace/screenshots/README.md).
+- Expanded the sample set with screenshot-friendly files and added [samples/README.md](/C:/Users/User/IdeaProjects/configiq_airflow_kafka_connect/samples/README.md).
+
+### Current blocker
+
+- Actual screenshot image capture still depends on a live IDE session.
+
+### Next smallest useful step
+
+- Open the screenshot pack scenes in PyCharm, capture the 4-6 final images, and add them to `assets/marketplace/screenshots/`.

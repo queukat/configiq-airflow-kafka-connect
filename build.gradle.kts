@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -10,7 +11,7 @@ group = providers.gradleProperty("pluginGroup").get()
 version = providers.gradleProperty("pluginVersion").get()
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 repositories {
@@ -27,11 +28,11 @@ dependencies {
 
     intellijPlatform {
         pycharm(providers.gradleProperty("platformVersion"))
-        bundledPlugin("PythonCore")
+        bundledPlugin("Pythonid")
         bundledPlugin("com.intellij.properties")
         bundledPlugin("org.intellij.intelliLang")
         bundledPlugin("org.jetbrains.plugins.yaml")
-        bundledModule("com.intellij.modules.json")
+        bundledPlugin("com.intellij.modules.json")
         testFramework(TestFrameworkType.Platform)
     }
 }
@@ -52,11 +53,11 @@ intellijPlatform {
         """.trimIndent()
 
         changeNotes = """
-            <p>Compatibility and release-prep patch.</p>
+            <p>IntelliJ IDEA compatibility update.</p>
             <ul>
-                <li>Replaced experimental Python AST usage in Airflow schedule matching with stable PSI APIs.</li>
-                <li>Added regression tests to prevent verifier warnings from returning.</li>
-                <li>Kept the existing Airflow and Kafka Connect MVP behavior unchanged.</li>
+                <li>Made Python support optional so the plugin now installs correctly in IntelliJ IDEA Ultimate.</li>
+                <li>Moved Python-only Airflow registrations into an optional descriptor tied to the Python module.</li>
+                <li>Added regression tests covering descriptor compatibility and removal of hard Python API references from always-loaded code.</li>
             </ul>
         """.trimIndent()
 
@@ -74,7 +75,12 @@ intellijPlatform {
     pluginVerification {
         ides {
             recommended()
+            create(IntelliJPlatformType.IntellijIdeaUltimate, "261.23567.71")
         }
+    }
+
+    publishing {
+        token = providers.gradleProperty("intellijPlatformPublishingToken")
     }
 }
 

@@ -71,7 +71,7 @@ class KConnectConfigInspectionTest : BasePlatformTestCase() {
         myFixture.configureByText(
             PropertiesFileType.INSTANCE,
             """
-            <warning descr="Missing required Kafka Connect field `tasks.max`.">name</warning>=inventory-source
+            <warning descr="Missing required Kafka Connect field `tasks.max`.">name=inventory-source</warning>
             connector.class=io.debezium.connector.postgresql.PostgresConnector
             topics.regex=inventory\..*
             """.trimIndent(),

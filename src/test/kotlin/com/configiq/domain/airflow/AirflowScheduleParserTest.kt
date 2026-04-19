@@ -11,6 +11,9 @@ class AirflowScheduleParserTest {
     fun validatesFiveFieldCronAndBuildsPreview() {
         val validation = AirflowScheduleParser.validate("0 12 * * *") as AirflowScheduleValidationResult.Valid
 
+        assertEquals("0 12 * * *", validation.schedule.normalizedText)
+        assertEquals("Normalized cron: 0 12 * * *", validation.schedule.resultSummary)
+
         val runs = validation.schedule.previewNextRuns(
             ZonedDateTime.of(2026, 3, 31, 11, 45, 0, 0, ZoneId.of("UTC")),
             3,
@@ -27,7 +30,25 @@ class AirflowScheduleParserTest {
         val validation = AirflowScheduleParser.validate("@daily") as AirflowScheduleValidationResult.Valid
 
         assertTrue(validation.schedule.supportsPreview())
+        assertEquals("Resolved to cron: 0 0 * * *", validation.schedule.resultSummary)
         assertEquals(2, validation.schedule.previewNextRuns(ZonedDateTime.of(2026, 3, 31, 23, 0, 0, 0, ZoneId.of("UTC")), 2).size)
+    }
+
+    @Test
+    fun normalizesWhitespaceInsideCronPreviewSummary() {
+        val validation = AirflowScheduleParser.validate("  0   6   * *   1-5  ") as AirflowScheduleValidationResult.Valid
+
+        assertEquals("0 6 * * 1-5", validation.schedule.normalizedText)
+        assertEquals("Normalized cron: 0 6 * * 1-5", validation.schedule.resultSummary)
+    }
+
+    @Test
+    fun explainsOnceMacroWithoutPreview() {
+        val validation = AirflowScheduleParser.validate("@once") as AirflowScheduleValidationResult.Valid
+
+        assertEquals("@once", validation.schedule.normalizedText)
+        assertEquals("Runs once, so there is no recurring cron preview.", validation.schedule.resultSummary)
+        assertTrue(!validation.schedule.supportsPreview())
     }
 
     @Test

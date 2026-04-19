@@ -1,0 +1,7 @@
+name: payments-source
+connector.class: io.confluent.connect.jdbc.JdbcSourceConnector
+tasks.max: "1"
+topics.regex: "payments\\..*"
+transforms: routeTopic
+transforms.routeTopic.type: org.apache.kafka.connect.transforms.RegexRouter
+transforms.routeTopic.regex: "payments\\.(.*)"

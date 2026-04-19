@@ -3,37 +3,42 @@ package com.configiq.domain.airflow
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLiteralValue
 import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.python.psi.PyCallExpression
-import com.jetbrains.python.psi.PyKeywordArgument
-import com.jetbrains.python.psi.PyStringLiteralExpression
 
 private val AIRFLOW_SCHEDULE_KEYWORDS = setOf("schedule", "schedule_interval")
+private val DAG_CALL_PATTERN = Regex("""(?:^|[^\w.])(?:[\w.]+\.)?DAG\s*\(""")
 
 data class AirflowScheduleTarget(
     val keyword: String,
-    val literal: PyStringLiteralExpression,
+    val literal: PsiElement,
     val scheduleText: String,
 )
 
 object AirflowDagContextMatcher {
     fun findScheduleTarget(element: PsiElement?): AirflowScheduleTarget? {
-        val literal = PsiTreeUtil.getParentOfType(element, PyStringLiteralExpression::class.java, false) ?: return null
+        val literal = generateSequence(element) { it.parent }
+            .firstOrNull { extractStringValue(it) != null }
+            ?: return null
         return fromLiteral(literal)
     }
 
-    fun fromLiteral(literal: PyStringLiteralExpression): AirflowScheduleTarget? {
-        val keywordArgument = literal.parent as? PyKeywordArgument ?: return null
+    fun fromLiteral(literal: PsiElement): AirflowScheduleTarget? {
+        if (extractStringValue(literal) == null) {
+            return null
+        }
+
+        val keywordArgument = generateSequence(literal.parent) { it.parent }
+            .firstOrNull { extractKeyword(it) in AIRFLOW_SCHEDULE_KEYWORDS }
+            ?: return null
         return fromKeywordArgument(keywordArgument)
     }
 
-    fun fromKeywordArgument(keywordArgument: PyKeywordArgument): AirflowScheduleTarget? {
+    fun fromKeywordArgument(keywordArgument: PsiElement): AirflowScheduleTarget? {
         val keyword = extractKeyword(keywordArgument) ?: return null
         if (keyword !in AIRFLOW_SCHEDULE_KEYWORDS) {
             return null
         }
 
-        val literal = keywordArgument.valueExpression as? PyStringLiteralExpression ?: return null
+        val literal = findStringLiteral(keywordArgument) ?: return null
         val scheduleText = extractStringValue(literal) ?: return null
         if (!isDagCall(keywordArgument)) {
             return null
@@ -46,15 +51,28 @@ object AirflowDagContextMatcher {
         )
     }
 
-    private fun extractKeyword(keywordArgument: PyKeywordArgument): String? =
-        (keywordArgument as PsiNamedElement).name
+    private fun extractKeyword(element: PsiElement): String? =
+        (element as? PsiNamedElement)?.name
 
-    private fun extractStringValue(literal: PyStringLiteralExpression): String? =
-        (literal as? PsiLiteralValue)?.value as? String
+    private fun extractStringValue(element: PsiElement): String? =
+        (element as? PsiLiteralValue)?.value as? String
 
-    private fun isDagCall(keywordArgument: PyKeywordArgument): Boolean {
-        val callExpression = PsiTreeUtil.getParentOfType(keywordArgument, PyCallExpression::class.java, false) ?: return false
-        val calleeName = callExpression.callee?.text?.substringAfterLast('.')
-        return calleeName == "DAG"
+    private fun findStringLiteral(root: PsiElement): PsiElement? {
+        extractStringValue(root)?.let { return root }
+
+        var child = root.firstChild
+        while (child != null) {
+            val literal = findStringLiteral(child)
+            if (literal != null) {
+                return literal
+            }
+            child = child.nextSibling
+        }
+
+        return null
     }
+
+    private fun isDagCall(keywordArgument: PsiElement): Boolean =
+        generateSequence(keywordArgument.parent) { it.parent }
+            .any { DAG_CALL_PATTERN.containsMatchIn(it.text) }
 }

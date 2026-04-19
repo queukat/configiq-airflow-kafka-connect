@@ -3,7 +3,7 @@
 ## In
 
 - JetBrains plugin MVP for authoring help only
-- PyCharm 2025.1-based target for the first shippable build
+- JetBrains 2024.1 / build 241 package target for the current shippable build
 - Airflow Python schedule detection in obvious DAG contexts
 - Airflow cron validation
 - Airflow schedule preview for valid cron strings
@@ -33,7 +33,7 @@
 ## Demo promise
 
 1. Open the sample Airflow DAG.
-2. See an invalid schedule warning or run a preview on a valid one.
+2. See an invalid schedule warning or open the schedule-result popup on a valid one.
 3. Open the sample Kafka Connect config.
 4. See regex-aware editing in JSON or YAML plus a conflict or missing transform problem.
 5. Apply a quick fix directly in the editor.

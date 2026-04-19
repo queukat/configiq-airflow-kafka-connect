@@ -4,4 +4,3 @@ tasks.max: "1"
 topics.regex: "audit\\..*"
 transforms: maskTopic,routeRecord
 transforms.maskTopic.regex: "audit\\.(.*)"
-
