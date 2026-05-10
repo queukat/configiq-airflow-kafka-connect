@@ -1,5 +1,9 @@
 # ConfigIQ Ops
 
+<!-- public-repo-status -->
+> Status: Active JetBrains Marketplace plugin. Issues are open for bugs and focused feature requests.
+
+
 `ConfigIQ Ops` is the Marketplace-facing name for this plugin project. It is a narrow JetBrains plugin for config-heavy DataOps authoring and helps catch a small set of high-value Airflow DAG and Kafka Connect mistakes before deploy.
 
 The repository name stays `configiq_airflow_kafka_connect`; the published plugin name is `ConfigIQ Ops`.
