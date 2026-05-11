@@ -87,3 +87,9 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 - add Kafka Connect regex injection for `.properties` when the PSI host path is worth it
 - broaden Airflow schedule semantics only after the current schedule-result flow is stable
 - improve Marketplace assets and screenshots around the existing demo flows
+## License
+
+<!-- commercial-license-policy -->
+This project is licensed for non-commercial use under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/).
+Commercial use, resale, paid distribution, marketplace publication, SaaS hosting, or bundling into a paid product requires separate written permission from the author.
+Project names, logos, package identifiers, store listings, screenshots, and other branding assets are not licensed for use in forks or redistributed builds.
