@@ -14,16 +14,20 @@ class RemoveKConnectEntryQuickFix(
 
     override fun getName(): String = "Remove `$key`"
 
-    override fun applyFix(project: com.intellij.openapi.project.Project, descriptor: ProblemDescriptor) {
+    override fun applyFix(
+        project: com.intellij.openapi.project.Project,
+        descriptor: ProblemDescriptor,
+    ) {
         val file = descriptor.psiElement.containingFile
         val config = KConnectConfigModel.extract(file) ?: return
         val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return
         val remainingEntries = config.entries.values.filter { it.key != key }
-        val replacement = when (config.format) {
-            KConnectConfigFormat.JSON -> serializeJson(remainingEntries)
-            KConnectConfigFormat.YAML -> serializeYaml(remainingEntries)
-            KConnectConfigFormat.PROPERTIES -> serializeProperties(remainingEntries)
-        }
+        val replacement =
+            when (config.format) {
+                KConnectConfigFormat.JSON -> serializeJson(remainingEntries)
+                KConnectConfigFormat.YAML -> serializeYaml(remainingEntries)
+                KConnectConfigFormat.PROPERTIES -> serializeProperties(remainingEntries)
+            }
 
         WriteCommandAction.runWriteCommandAction(project) {
             document.setText(replacement)
@@ -46,23 +50,20 @@ class RemoveKConnectEntryQuickFix(
         }
     }
 
-    private fun serializeYaml(entries: List<com.configiq.domain.kconnect.KConnectEntry>): String {
-        return entries.joinToString("\n") { entry ->
+    private fun serializeYaml(entries: List<com.configiq.domain.kconnect.KConnectEntry>): String =
+        entries.joinToString("\n") { entry ->
             "${entry.key}: ${renderYamlValue(entry.value)}"
         }
-    }
 
-    private fun serializeProperties(entries: List<com.configiq.domain.kconnect.KConnectEntry>): String {
-        return entries.joinToString("\n") { entry ->
+    private fun serializeProperties(entries: List<com.configiq.domain.kconnect.KConnectEntry>): String =
+        entries.joinToString("\n") { entry ->
             "${entry.key}=${entry.value}"
         }
-    }
 
-    private fun renderYamlValue(value: String): String {
-        return if (value.any { it.isWhitespace() || it == ':' || it == '"' }) {
+    private fun renderYamlValue(value: String): String =
+        if (value.any { it.isWhitespace() || it == ':' || it == '"' }) {
             "\"${value.replace("\"", "\\\"")}\""
         } else {
             value
         }
-    }
 }

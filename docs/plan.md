@@ -1,5 +1,10 @@
 # ConfigIQ for Airflow & Kafka Connect MVP Plan
 
+## Current note
+
+- This file is the historical MVP plan.
+- For the latest shipped state and next-stage recommendation, see `docs/current-state.md`.
+
 ## Context anchor
 
 - Goal: ship a small public JetBrains plugin that helps authors catch high-value Airflow DAG and Kafka Connect config mistakes before deploy.
@@ -19,7 +24,7 @@
 - Constraint: prefer one coherent, demoable MVP over a generic validation framework.
 - Scope cut after sanity checks:
   - Airflow Jinja injection is postponed from v1
-  - Kafka Connect regex injection is limited to JSON and YAML in v1
+  - Kafka Connect regex injection covers JSON, YAML, and `.properties` as of `0.1.5`
 
 ## Product goal
 
@@ -47,10 +52,10 @@
 
 - Detect connector config files by signature keys such as `connector.class`.
 - Support JSON, YAML, and `.properties` authoring surfaces for inspections and quick fixes.
-- Inject RegExp language into JSON and YAML fields:
+- Inject RegExp language into JSON, YAML, and `.properties` fields:
   - `topics.regex`
   - `transforms.<alias>.regex`
-- Postpone `.properties` regex injection until it is clearly worth the PSI complexity.
+- `.properties` regex injection was added after the PSI host path proved small enough.
 - Implement these first inspections:
   - `topics` and `topics.regex` conflict
   - `transforms` aliases declared but required `transforms.<alias>.type` missing
@@ -272,8 +277,8 @@ Prefer explicit domain code with small reusable helpers.
 - YAML nested transform structure handling beyond flat key forms.
 - Config generation wizards.
 - Tool windows and run configurations.
-- IntelliJ IDEA compatibility work beyond what PyCharm-first code naturally preserves.
-- Marketplace publishing automation.
+- broad IntelliJ IDEA compatibility work beyond the current verified target
+- Marketplace automation beyond the documented local release flow
 
 ## Decision-first recommendation
 

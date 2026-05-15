@@ -15,16 +15,16 @@
         <ul>
             <li>validates Airflow schedule strings and previews the next runs</li>
             <li>flags high-value Kafka Connect conflicts and missing required keys</li>
-            <li>adds focused quick fixes and RegExp injection for JSON and YAML regex fields</li>
+            <li>adds focused quick fixes and RegExp injection for JSON, YAML, and properties regex fields</li>
         </ul>
     ]]></description>
 
     <change-notes><![CDATA[
-        <p>IntelliJ IDEA compatibility update.</p>
+        <p>Kafka Connect properties regex support and release hardening.</p>
         <ul>
-            <li>Made Python support optional so the plugin now installs correctly in IntelliJ IDEA Ultimate.</li>
-            <li>Moved Python-only Airflow registrations into an optional descriptor tied to the Python module.</li>
-            <li>Added regression tests covering descriptor compatibility and removal of hard Python API references from always-loaded code.</li>
+            <li>Added RegExp injection for Kafka Connect <code>.properties</code> regex fields.</li>
+            <li>Covered <code>topics.regex</code> properties injection with a regression test.</li>
+            <li>Added <code>ktlintCheck</code> and <code>detekt</code> to the documented release gate.</li>
         </ul>
     ]]></change-notes>
 

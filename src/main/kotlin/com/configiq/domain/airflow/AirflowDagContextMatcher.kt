@@ -15,9 +15,10 @@ data class AirflowScheduleTarget(
 
 object AirflowDagContextMatcher {
     fun findScheduleTarget(element: PsiElement?): AirflowScheduleTarget? {
-        val literal = generateSequence(element) { it.parent }
-            .firstOrNull { extractStringValue(it) != null }
-            ?: return null
+        val literal =
+            generateSequence(element) { it.parent }
+                .firstOrNull { extractStringValue(it) != null }
+                ?: return null
         return fromLiteral(literal)
     }
 
@@ -26,9 +27,10 @@ object AirflowDagContextMatcher {
             return null
         }
 
-        val keywordArgument = generateSequence(literal.parent) { it.parent }
-            .firstOrNull { extractKeyword(it) in AIRFLOW_SCHEDULE_KEYWORDS }
-            ?: return null
+        val keywordArgument =
+            generateSequence(literal.parent) { it.parent }
+                .firstOrNull { extractKeyword(it) in AIRFLOW_SCHEDULE_KEYWORDS }
+                ?: return null
         return fromKeywordArgument(keywordArgument)
     }
 
@@ -51,11 +53,9 @@ object AirflowDagContextMatcher {
         )
     }
 
-    private fun extractKeyword(element: PsiElement): String? =
-        (element as? PsiNamedElement)?.name
+    private fun extractKeyword(element: PsiElement): String? = (element as? PsiNamedElement)?.name
 
-    private fun extractStringValue(element: PsiElement): String? =
-        (element as? PsiLiteralValue)?.value as? String
+    private fun extractStringValue(element: PsiElement): String? = (element as? PsiLiteralValue)?.value as? String
 
     private fun findStringLiteral(root: PsiElement): PsiElement? {
         extractStringValue(root)?.let { return root }

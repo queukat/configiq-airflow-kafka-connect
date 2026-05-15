@@ -1,8 +1,31 @@
 # ConfigIQ Ops
 
+[![JetBrains Marketplace](https://img.shields.io/jetbrains/plugin/v/31040)](https://plugins.jetbrains.com/plugin/31040-configiq-ops)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/31040)](https://plugins.jetbrains.com/plugin/31040-configiq-ops)
+[![Rating](https://img.shields.io/jetbrains/plugin/r/stars/31040)](https://plugins.jetbrains.com/plugin/31040-configiq-ops)
+![Local SonarQube Quality Gate](https://img.shields.io/badge/Local%20SonarQube-Quality%20Gate%20OK-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-75.4%25-brightgreen)
+![Issues](https://img.shields.io/badge/Issues-0-brightgreen)
+![Duplications](https://img.shields.io/badge/Duplications-0.0%25-brightgreen)
+
+<details>
+<summary><strong>Local SonarQube quality snapshot</strong> (checked 2026-05-16)</summary>
+
+| Metric | Value |
+| --- | --- |
+| Quality Gate | OK |
+| Overall coverage | 75.4% |
+| New-code coverage | 87.5% |
+| Overall duplicated lines | 0.0% |
+| Bugs | 0 |
+| Vulnerabilities | 0 |
+| Code smells | 0 |
+
+These values are a checked local SonarQube API snapshot, not live cloud badges.
+</details>
+
 <!-- public-repo-status -->
 > Status: Active JetBrains Marketplace plugin. Issues are open for bugs and focused feature requests.
-
 
 `ConfigIQ Ops` is the Marketplace-facing name for this plugin project. It is a narrow JetBrains plugin for config-heavy DataOps authoring and helps catch a small set of high-value Airflow DAG and Kafka Connect mistakes before deploy.
 
@@ -16,7 +39,7 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 - validates Airflow schedule strings in obvious DAG contexts
 - shows the parsed Airflow schedule result and previews the next 5 runs for valid cron schedules and supported macros
 - detects Kafka Connect config files by signature keys
-- injects RegExp language into Kafka Connect regex fields in JSON and YAML configs
+- injects RegExp language into Kafka Connect regex fields in JSON, YAML, and `.properties` configs
 - flags common Kafka Connect authoring mistakes in JSON, YAML, and `.properties`
 - adds targeted quick fixes for the first high-value config errors
 - lets users enable or disable the Airflow and Kafka Connect packs independently
@@ -30,7 +53,6 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 - no full connector ecosystem validation
 - no giant rules DSL
 - no Airflow Jinja injection in v1
-- no Kafka Connect `.properties` regex injection in v1
 
 ## Supported contexts in v1
 
@@ -44,8 +66,8 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 
 - flat top-level JSON config files with connector signature keys
 - flat top-level YAML config files with connector signature keys
-- flat top-level `.properties` connector config files for inspections and quick fixes
-- RegExp injection for `topics.regex` and `transforms.<alias>.regex` in JSON and YAML
+- flat top-level `.properties` connector config files for inspections, quick fixes, and regex editing support
+- RegExp injection for `topics.regex` and `transforms.<alias>.regex` in JSON, YAML, and `.properties`
 
 ## Screenshots
 
@@ -61,6 +83,7 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 ## How to test
 
 ```powershell
+./gradlew.bat -g .gradle-user-home ktlintCheck detekt --console=plain
 ./gradlew.bat -g .gradle-user-home test --console=plain
 ./gradlew.bat -g .gradle-user-home buildPlugin --console=plain
 ./gradlew.bat -g .gradle-user-home verifyPlugin --console=plain
@@ -69,7 +92,7 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 ## How to publish
 
 - Publishing guide: `docs/publishing.md`
-- Current workflow: bump the version, run `test buildPlugin verifyPlugin`, then run `publishPlugin`
+- Current workflow: bump the version, run `ktlintCheck detekt test buildPlugin verifyPlugin`, then run `publishPlugin`
 - Marketplace page: https://plugins.jetbrains.com/plugin/31040-configiq-ops
 
 ## Project links
@@ -78,15 +101,16 @@ PyCharm remains the primary Airflow smoke target; other 241-line IDEs need Pytho
 - Issues: https://github.com/queukat/configiq-airflow-kafka-connect/issues
 - EULA: ./docs/EULA.md
 - Privacy: ./docs/PRIVACY.md
+- Current status: ./docs/current-state.md
 - Quick Start: ./docs/quick-start.md
 - Sample configs: ./samples/README.md
 
 ## Roadmap
 
 - add Airflow Jinja injection only in a few obvious templated fields
-- add Kafka Connect regex injection for `.properties` when the PSI host path is worth it
 - broaden Airflow schedule semantics only after the current schedule-result flow is stable
 - improve Marketplace assets and screenshots around the existing demo flows
+
 ## License
 
 <!-- commercial-license-policy -->

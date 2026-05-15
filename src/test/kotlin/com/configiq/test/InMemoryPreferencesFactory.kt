@@ -14,11 +14,17 @@ class InMemoryPreferencesFactory : PreferencesFactory {
     override fun systemRoot(): Preferences = systemRoot
 }
 
-private class InMemoryPreferences(parent: AbstractPreferences?, name: String) : AbstractPreferences(parent, name) {
+private class InMemoryPreferences(
+    parent: AbstractPreferences?,
+    name: String,
+) : AbstractPreferences(parent, name) {
     private val values = ConcurrentHashMap<String, String>()
     private val children = ConcurrentHashMap<String, InMemoryPreferences>()
 
-    override fun putSpi(key: String, value: String) {
+    override fun putSpi(
+        key: String,
+        value: String,
+    ) {
         values[key] = value
     }
 
@@ -37,11 +43,10 @@ private class InMemoryPreferences(parent: AbstractPreferences?, name: String) : 
 
     override fun childrenNamesSpi(): Array<String> = children.keys().toList().toTypedArray()
 
-    override fun childSpi(name: String): AbstractPreferences {
-        return children.computeIfAbsent(name) { childName ->
+    override fun childSpi(name: String): AbstractPreferences =
+        children.computeIfAbsent(name) { childName ->
             InMemoryPreferences(this, childName)
         }
-    }
 
     override fun syncSpi() = Unit
 

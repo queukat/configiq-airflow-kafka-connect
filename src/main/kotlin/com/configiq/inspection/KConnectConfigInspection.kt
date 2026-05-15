@@ -6,14 +6,18 @@ import com.configiq.quickfix.AddKConnectEntryQuickFix
 import com.configiq.quickfix.RemoveKConnectEntryQuickFix
 import com.configiq.settings.ConfigIqSettingsService
 import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.PsiFile
 
 abstract class KConnectConfigInspection : LocalInspectionTool() {
-    override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor> {
+    override fun checkFile(
+        file: PsiFile,
+        manager: InspectionManager,
+        isOnTheFly: Boolean,
+    ): Array<ProblemDescriptor> {
         if (!ConfigIqSettingsService.getInstance().isKafkaConnectPackEnabled()) {
             return emptyArray()
         }
@@ -33,20 +37,22 @@ abstract class KConnectConfigInspection : LocalInspectionTool() {
         isOnTheFly: Boolean,
     ) {
         config.missingRequiredKeys().forEach { missingKey ->
-            val quickFix = when (missingKey) {
-                "tasks.max" -> AddKConnectEntryQuickFix("tasks.max", "1")
-                "name" -> AddKConnectEntryQuickFix("name", "<connector-name>")
-                "connector.class" -> AddKConnectEntryQuickFix("connector.class", "<connector-class>")
-                else -> null
-            }
+            val quickFix =
+                when (missingKey) {
+                    "tasks.max" -> AddKConnectEntryQuickFix("tasks.max", "1")
+                    "name" -> AddKConnectEntryQuickFix("name", "<connector-name>")
+                    "connector.class" -> AddKConnectEntryQuickFix("connector.class", "<connector-class>")
+                    else -> null
+                }
 
-            problems += manager.createProblemDescriptor(
-                config.anchor,
-                "Missing required Kafka Connect field `$missingKey`.",
-                isOnTheFly,
-                quickFix?.let { arrayOf(it) } ?: emptyArray<LocalQuickFix>(),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            )
+            problems +=
+                manager.createProblemDescriptor(
+                    config.anchor,
+                    "Missing required Kafka Connect field `$missingKey`.",
+                    isOnTheFly,
+                    quickFix?.let { arrayOf(it) } ?: emptyArray<LocalQuickFix>(),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                )
         }
     }
 
@@ -59,20 +65,22 @@ abstract class KConnectConfigInspection : LocalInspectionTool() {
         val topics = config.entry("topics") ?: return
         val topicsRegex = config.entry("topics.regex") ?: return
 
-        problems += manager.createProblemDescriptor(
-            topics.element,
-            "`topics` conflicts with `topics.regex`.",
-            isOnTheFly,
-            arrayOf(RemoveKConnectEntryQuickFix("topics")),
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-        )
-        problems += manager.createProblemDescriptor(
-            topicsRegex.element,
-            "`topics.regex` conflicts with `topics`.",
-            isOnTheFly,
-            arrayOf(RemoveKConnectEntryQuickFix("topics.regex")),
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-        )
+        problems +=
+            manager.createProblemDescriptor(
+                topics.element,
+                "`topics` conflicts with `topics.regex`.",
+                isOnTheFly,
+                arrayOf(RemoveKConnectEntryQuickFix("topics")),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            )
+        problems +=
+            manager.createProblemDescriptor(
+                topicsRegex.element,
+                "`topics.regex` conflicts with `topics`.",
+                isOnTheFly,
+                arrayOf(RemoveKConnectEntryQuickFix("topics.regex")),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            )
     }
 
     private fun registerMissingTransformTypes(
@@ -87,13 +95,14 @@ abstract class KConnectConfigInspection : LocalInspectionTool() {
                 return@forEach
             }
 
-            problems += manager.createProblemDescriptor(
-                config.entry("transforms")?.element ?: config.anchor,
-                "Transform alias `$alias` is missing `$typeKey`.",
-                isOnTheFly,
-                arrayOf(AddKConnectEntryQuickFix(typeKey, "<transform class>")),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            )
+            problems +=
+                manager.createProblemDescriptor(
+                    config.entry("transforms")?.element ?: config.anchor,
+                    "Transform alias `$alias` is missing `$typeKey`.",
+                    isOnTheFly,
+                    arrayOf(AddKConnectEntryQuickFix(typeKey, "<transform class>")),
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                )
         }
     }
 }

@@ -6,6 +6,7 @@ import com.intellij.json.psi.JsonProperty
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.lang.properties.psi.Property
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.PsiElement
@@ -15,14 +16,17 @@ import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLScalar
 
 class KConnectRegexInjector : MultiHostInjector {
-    override fun elementsToInjectIn(): List<Class<out PsiElement>> {
-        return listOf(
+    override fun elementsToInjectIn(): List<Class<out PsiElement>> =
+        listOf(
             JsonStringLiteral::class.java,
+            Property::class.java,
             YAMLScalar::class.java,
         )
-    }
 
-    override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
+    override fun getLanguagesToInject(
+        registrar: MultiHostRegistrar,
+        context: PsiElement,
+    ) {
         val host = context as? PsiLanguageInjectionHost ?: return
         if (!host.isValidHost) {
             return
@@ -36,11 +40,13 @@ class KConnectRegexInjector : MultiHostInjector {
             return
         }
 
-        val target = when (host) {
-            is JsonStringLiteral -> jsonTarget(host)
-            is YAMLScalar -> yamlTarget(host)
-            else -> null
-        } ?: return
+        val target =
+            when (host) {
+                is JsonStringLiteral -> jsonTarget(host)
+                is Property -> propertiesTarget(host)
+                is YAMLScalar -> yamlTarget(host)
+                else -> null
+            } ?: return
 
         if (!isRegexKey(target.key)) {
             return
@@ -67,9 +73,15 @@ class KConnectRegexInjector : MultiHostInjector {
         )
     }
 
-    private fun isRegexKey(key: String): Boolean {
-        return key == "topics.regex" || REGEX_TRANSFORM_KEY.matches(key)
+    private fun propertiesTarget(host: Property): InjectionTarget? {
+        val key = host.key ?: return null
+        return InjectionTarget(
+            key = key,
+            range = ElementManipulators.getValueTextRange(host),
+        )
     }
+
+    private fun isRegexKey(key: String): Boolean = key == "topics.regex" || REGEX_TRANSFORM_KEY.matches(key)
 
     private data class InjectionTarget(
         val key: String,

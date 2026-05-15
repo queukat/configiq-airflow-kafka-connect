@@ -56,7 +56,10 @@ class PluginDescriptorCompatibilityTest {
         }
     }
 
-    private fun findDependsElement(document: Document, dependencyId: String): Element? {
+    private fun findDependsElement(
+        document: Document,
+        dependencyId: String,
+    ): Element? {
         val depends = document.getElementsByTagName("depends")
         for (index in 0 until depends.length) {
             val node = depends.item(index) as? Element ?: continue
@@ -67,7 +70,10 @@ class PluginDescriptorCompatibilityTest {
         return null
     }
 
-    private fun hasInspection(document: Document, shortName: String): Boolean {
+    private fun hasInspection(
+        document: Document,
+        shortName: String,
+    ): Boolean {
         val inspections = document.getElementsByTagName("localInspection")
         for (index in 0 until inspections.length) {
             val node = inspections.item(index) as? Element ?: continue
@@ -78,7 +84,10 @@ class PluginDescriptorCompatibilityTest {
         return false
     }
 
-    private fun hasIntention(document: Document, className: String): Boolean {
+    private fun hasIntention(
+        document: Document,
+        className: String,
+    ): Boolean {
         val intentions = document.getElementsByTagName("intentionAction")
         for (index in 0 until intentions.length) {
             val node = intentions.item(index) as? Element ?: continue

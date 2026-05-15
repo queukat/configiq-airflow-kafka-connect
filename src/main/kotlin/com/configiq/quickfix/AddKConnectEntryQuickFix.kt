@@ -15,16 +15,20 @@ class AddKConnectEntryQuickFix(
 
     override fun getName(): String = "Add `$key`"
 
-    override fun applyFix(project: com.intellij.openapi.project.Project, descriptor: ProblemDescriptor) {
+    override fun applyFix(
+        project: com.intellij.openapi.project.Project,
+        descriptor: ProblemDescriptor,
+    ) {
         val file = descriptor.psiElement.containingFile
         val config = KConnectConfigModel.extract(file) ?: return
         val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return
 
-        val insertion = when (config.format) {
-            KConnectConfigFormat.JSON -> appendJsonEntry(document.text, key, value)
-            KConnectConfigFormat.YAML -> appendYamlEntry(document.text, key, value)
-            KConnectConfigFormat.PROPERTIES -> appendPropertiesEntry(document.text, key, value)
-        } ?: return
+        val insertion =
+            when (config.format) {
+                KConnectConfigFormat.JSON -> appendJsonEntry(document.text, key, value)
+                KConnectConfigFormat.YAML -> appendYamlEntry(document.text, key, value)
+                KConnectConfigFormat.PROPERTIES -> appendPropertiesEntry(document.text, key, value)
+            } ?: return
 
         WriteCommandAction.runWriteCommandAction(project) {
             document.setText(insertion)
@@ -32,7 +36,11 @@ class AddKConnectEntryQuickFix(
         }
     }
 
-    private fun appendJsonEntry(text: String, key: String, value: String): String? {
+    private fun appendJsonEntry(
+        text: String,
+        key: String,
+        value: String,
+    ): String? {
         val trimmed = text.trimEnd()
         val closingBraceOffset = trimmed.lastIndexOf('}')
         if (closingBraceOffset < 0) {
@@ -56,12 +64,20 @@ class AddKConnectEntryQuickFix(
         }
     }
 
-    private fun appendYamlEntry(text: String, key: String, value: String): String {
+    private fun appendYamlEntry(
+        text: String,
+        key: String,
+        value: String,
+    ): String {
         val separator = if (text.isBlank() || text.endsWith("\n")) "" else "\n"
         return text + separator + "$key: \"$value\""
     }
 
-    private fun appendPropertiesEntry(text: String, key: String, value: String): String {
+    private fun appendPropertiesEntry(
+        text: String,
+        key: String,
+        value: String,
+    ): String {
         val separator = if (text.isBlank() || text.endsWith("\n")) "" else "\n"
         return text + separator + "$key=$value"
     }

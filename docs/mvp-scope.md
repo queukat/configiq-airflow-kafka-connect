@@ -8,7 +8,7 @@
 - Airflow cron validation
 - Airflow schedule preview for valid cron strings
 - Kafka Connect config detection in JSON, YAML, and `.properties`
-- Kafka Connect RegExp injection in JSON and YAML for `topics.regex` and `transforms.<alias>.regex`
+- Kafka Connect RegExp injection in JSON, YAML, and `.properties` for `topics.regex` and `transforms.<alias>.regex`
 - Kafka Connect inspections for:
   - `topics` vs `topics.regex`
   - missing `transforms.<alias>.type`
@@ -26,7 +26,6 @@
 - Connector-specific deep validation
 - Full Airflow scheduler semantics
 - Airflow Jinja injection
-- Kafka Connect `.properties` regex injection
 - Tool windows
 - Analytics or telemetry
 
@@ -35,7 +34,7 @@
 1. Open the sample Airflow DAG.
 2. See an invalid schedule warning or open the schedule-result popup on a valid one.
 3. Open the sample Kafka Connect config.
-4. See regex-aware editing in JSON or YAML plus a conflict or missing transform problem.
+4. See regex-aware editing in JSON, YAML, or `.properties` plus a conflict or missing transform problem.
 5. Apply a quick fix directly in the editor.
 
 ## Scope guard

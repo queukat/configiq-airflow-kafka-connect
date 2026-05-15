@@ -16,17 +16,19 @@ import kotlin.test.assertTrue
 class AirflowDagContextMatcherTest {
     @Test
     fun findsScheduleKeywordViaStablePsiApis() {
-        val target = createTarget(
-            keyword = "schedule",
-            scheduleText = "0 12 * * *",
-            callText = """
-                with DAG(
-                    dag_id="stable_schedule_keyword",
-                    schedule="0 12 * * *",
-                ) as dag:
-                    pass
-            """.trimIndent(),
-        )
+        val target =
+            createTarget(
+                keyword = "schedule",
+                scheduleText = "0 12 * * *",
+                callText =
+                    """
+                    with DAG(
+                        dag_id="stable_schedule_keyword",
+                        schedule="0 12 * * *",
+                    ) as dag:
+                        pass
+                    """.trimIndent(),
+            )
 
         assertNotNull(target)
         assertEquals("schedule", target.keyword)
@@ -35,16 +37,18 @@ class AirflowDagContextMatcherTest {
 
     @Test
     fun findsScheduleIntervalKeywordViaStablePsiApis() {
-        val target = createTarget(
-            keyword = "schedule_interval",
-            scheduleText = "@daily",
-            callText = """
-                dag = DAG(
-                    dag_id="stable_schedule_interval_keyword",
-                    schedule_interval="@daily",
-                )
-            """.trimIndent(),
-        )
+        val target =
+            createTarget(
+                keyword = "schedule_interval",
+                scheduleText = "@daily",
+                callText =
+                    """
+                    dag = DAG(
+                        dag_id="stable_schedule_interval_keyword",
+                        schedule_interval="@daily",
+                    )
+                    """.trimIndent(),
+            )
 
         assertNotNull(target)
         assertEquals("schedule_interval", target.keyword)
@@ -53,15 +57,17 @@ class AirflowDagContextMatcherTest {
 
     @Test
     fun ignoresMatchingKeywordOutsideDagCall() {
-        val target = createTarget(
-            keyword = "schedule",
-            scheduleText = "0 12 * * *",
-            callText = """
-                build_job(
-                    schedule="0 12 * * *",
-                )
-            """.trimIndent(),
-        )
+        val target =
+            createTarget(
+                keyword = "schedule",
+                scheduleText = "0 12 * * *",
+                callText =
+                    """
+                    build_job(
+                        schedule="0 12 * * *",
+                    )
+                    """.trimIndent(),
+            )
 
         assertNull(target)
     }
@@ -89,7 +95,11 @@ class AirflowDagContextMatcherTest {
         assertFalse(classText.contains("com/jetbrains/python/"))
     }
 
-    private fun createTarget(keyword: String, scheduleText: String, callText: String): AirflowScheduleTarget? {
+    private fun createTarget(
+        keyword: String,
+        scheduleText: String,
+        callText: String,
+    ): AirflowScheduleTarget? {
         val call = TestPsiElement(elementText = callText)
         val keywordArgument = TestPsiElement(elementText = """$keyword="$scheduleText"""", elementName = keyword)
         val literal = TestLiteralElement(text = "\"$scheduleText\"", literalValue = scheduleText)
@@ -102,16 +112,20 @@ class AirflowDagContextMatcherTest {
         return AirflowDagContextMatcher.findScheduleTarget(caret)
     }
 
-    private fun link(parent: TestPsiElement, child: TestPsiElement) {
+    private fun link(
+        parent: TestPsiElement,
+        child: TestPsiElement,
+    ) {
         parent.firstChildElement = child
         child.parentElement = parent
     }
 
     private fun readClassText(clazz: Class<*>): String {
-        val classBytes = clazz
-            .getResourceAsStream("${clazz.simpleName}.class")
-            ?.readBytes()
-            ?: throw AssertionError("Failed to read ${clazz.simpleName}.class bytes")
+        val classBytes =
+            clazz
+                .getResourceAsStream("${clazz.simpleName}.class")
+                ?.readBytes()
+                ?: throw AssertionError("Failed to read ${clazz.simpleName}.class bytes")
         return String(classBytes, StandardCharsets.ISO_8859_1)
     }
 
@@ -137,7 +151,8 @@ class AirflowDagContextMatcherTest {
     private class TestLiteralElement(
         text: String,
         private val literalValue: String,
-    ) : TestPsiElement(text), PsiLiteralValue {
+    ) : TestPsiElement(text),
+        PsiLiteralValue {
         override fun getValue(): Any = literalValue
     }
 }

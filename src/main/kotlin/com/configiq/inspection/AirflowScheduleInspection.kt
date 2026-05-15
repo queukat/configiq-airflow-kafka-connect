@@ -10,7 +10,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 
 class AirflowScheduleInspection : LocalInspectionTool() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    override fun buildVisitor(
+        holder: ProblemsHolder,
+        isOnTheFly: Boolean,
+    ): PsiElementVisitor {
         if (!ConfigIqSettingsService.getInstance().isAirflowPackEnabled()) {
             return PsiElementVisitor.EMPTY_VISITOR
         }

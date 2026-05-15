@@ -1,5 +1,9 @@
 # Progress Log
 
+## Current note
+
+- For a concise "where we are now" summary, see `docs/current-state.md`.
+
 ## Milestone 1: Planning and scaffold normalization
 
 ### Repository inspection
@@ -315,3 +319,111 @@
 ### Next smallest useful step
 
 - Open the screenshot pack scenes in PyCharm, capture the 4-6 final images, and add them to `assets/marketplace/screenshots/`.
+
+## Milestone 8: IntelliJ IDEA compatibility and published release
+
+### Release and compatibility update
+
+- Date: 2026-04-19
+- Decision:
+  - fix the IntelliJ IDEA compatibility break instead of keeping the plugin PyCharm-only in practice
+  - document the real Marketplace publishing path inside the repository
+
+### Implemented
+
+- Made Python support optional in the main plugin descriptor.
+- Moved Python-only Airflow registrations into a separate optional descriptor.
+- Removed hard `com.jetbrains.python` references from always-loaded code paths.
+- Added regression tests for:
+  - descriptor compatibility
+  - bytecode-level absence of hard Python API references
+- Added explicit `verifyPlugin` coverage for `IntelliJ IDEA Ultimate 261.23567.71`.
+- Published `0.1.4` to JetBrains Marketplace.
+- Added `docs/publishing.md` and `docs/current-state.md`.
+
+### Verification
+
+- `./gradlew.bat -g .gradle-user-home test buildPlugin verifyPlugin --console=plain --no-daemon` succeeded.
+- `./gradlew.bat -g .gradle-user-home publishPlugin --console=plain --no-daemon` succeeded.
+- Marketplace accepted `0.1.4`.
+
+### Current stage assessment
+
+- The MVP is no longer only "implemented".
+- It is now:
+  - built
+  - tested
+  - verifier-checked
+  - documented
+  - published
+
+### Recommended next smallest useful step
+
+- Use `docs/current-state.md` as the handoff point for Stage 2 planning.
+- Choose one expansion direction first:
+  - Airflow depth
+  - Kafka Connect depth
+  - or pure product hardening/polish
+
+## Milestone 9: Same-version re-upload and quality gate
+
+### Release operations update
+
+- Date: 2026-05-03
+- Reason:
+  - Marketplace compatibility verification reported that `0.1.4` could not be extracted.
+  - The local ZIP and downloaded Marketplace ZIP both extracted correctly, but the published update needed a clean replacement.
+
+### Implemented
+
+- Deleted Marketplace update `1026776` for version `0.1.4`.
+- Re-uploaded freshly built `0.1.4` as Marketplace update `1038071`.
+- Documented the same-version delete and re-upload path in `docs/publishing.md`.
+- Added Gradle quality gates:
+  - `ktlintCheck`
+  - `detekt`
+- Added local detekt configuration under `config/detekt/detekt.yml`.
+- Ran ktlint auto-format across Kotlin and Kotlin script sources.
+
+### Verification
+
+- `./gradlew.bat -g .gradle-user-home ktlintCheck detekt --console=plain --no-daemon` succeeded.
+- `./gradlew.bat -g .gradle-user-home test --console=plain --no-daemon` succeeded.
+- The re-uploaded Marketplace archive for update `1038071` downloaded and extracted with `tar`, `jar`, and PowerShell `Expand-Archive`.
+
+### Release assessment
+
+- `0.1.5` can be justified as a hardening patch if it includes the new quality gates plus a small user-visible gap closure.
+- Best user-visible `0.1.5` candidate:
+  - Kafka Connect `.properties` RegExp injection for regex fields.
+- Bigger feature tracks should be saved for `0.2.0`:
+  - broader Airflow semantics
+  - connector-class-specific validation
+  - Airflow Jinja injection
+
+## Milestone 10: Kafka Connect properties regex injection
+
+### Release update
+
+- Date: 2026-05-03
+- Target version: `0.1.5`
+- Decision:
+  - ship `.properties` regex injection as a narrow patch release
+  - keep broader Airflow and connector-specific validation work for `0.2.0+`
+
+### Implemented
+
+- Extended `KConnectRegexInjector` to inject `RegExp` into Kafka Connect `.properties` values.
+- Covered `topics.regex` in `.properties` with a regression test.
+- Updated plugin metadata and release notes for `0.1.5`.
+- Updated README and current-state docs so `.properties` regex editing is part of the supported Kafka Connect surface.
+
+### Verification
+
+- `./gradlew.bat -g .gradle-user-home ktlintCheck detekt --console=plain --no-daemon` succeeded.
+- `./gradlew.bat -g .gradle-user-home test buildPlugin --console=plain --no-daemon` succeeded.
+- `tar -tf build\distributions\configiq-airflow-kafka-connect-0.1.5.zip` succeeded.
+- `./gradlew.bat -g .gradle-user-home verifyPlugin --console=plain --no-daemon` succeeded after clearing the stale local verifier cache at `C:\Users\User\.pluginVerifier`.
+- Verifier verdicts were `Compatible` for:
+  - recommended PyCharm matrix through `PY-261.23567.174`
+  - `IntelliJ IDEA Ultimate 261.23567.71`
